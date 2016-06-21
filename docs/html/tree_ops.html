@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Unix-like tree utilities &mdash; dep_tregex  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="dep_tregex  documentation" href="index.html" />
+    <link rel="next" title="Tregex tutorial" href="tregex_tutorial.html" />
+    <link rel="prev" title="Getting started" href="quickstart.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tregex_tutorial.html" title="Tregex tutorial"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="Getting started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">dep_tregex  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="unix-like-tree-utilities">
+<h1>Unix-like tree utilities<a class="headerlink" href="#unix-like-tree-utilities" title="Permalink to this headline">¶</a></h1>
+<p>All utilities read trees from stdin and write trees to stdout.</p>
+<div class="section" id="words">
+<h2><tt class="docutils literal"><span class="pre">words</span></tt><a class="headerlink" href="#words" title="Permalink to this headline">¶</a></h2>
+<p>Extract and print words from trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; words &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>What if Google Morphed Into GoogleOS ?
+What if Google expanded on its search - engine ( and now e-mail ) wares into a full - fledged operating system ?
+[ via Microsoft Watch from Mary Jo Foley ]
+&lt;...&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="wc">
+<h2><tt class="docutils literal"><span class="pre">wc</span></tt><a class="headerlink" href="#wc" title="Permalink to this headline">¶</a></h2>
+<p>Count number of trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; wc &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>2077
+</pre></div>
+</div>
+</div>
+<div class="section" id="nth">
+<h2><tt class="docutils literal"><span class="pre">nth</span></tt><a class="headerlink" href="#nth" title="Permalink to this headline">¶</a></h2>
+<p>Print N&#8217;th tree (N is 1-based).</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; nth 10 &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<div class="highlight-none"><div class="highlight"><pre>1   I       I       PRON    PRP     Case=Nom|Number=Sing|Person=1|PronType=Prs      3       nsubj   _       _
+2   &#39;m      be      AUX     VBP     Mood=Ind|Tense=Pres|VerbForm=Fin        3       aux     _       _
+3   staying stay    VERB    VBG     Tense=Pres|VerbForm=Part        0       root    _       _
+4   away    away    ADV     RB      _       3       advmod  _       _
+5   from    from    ADP     IN      _       7       case    _       _
+6   the     the     DET     DT      Definite=Def|PronType=Art       7       det     _       _
+7   stock   stock   NOUN    NN      Number=Sing     4       nmod    _       _
+8   .       .       PUNCT   .       _       3       punct   _       _
+</pre></div>
+</div>
+</div>
+<div class="section" id="head">
+<h2><tt class="docutils literal"><span class="pre">head</span></tt><a class="headerlink" href="#head" title="Permalink to this headline">¶</a></h2>
+<p>Print first N trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; head 10 &lt;en-ud-test.conllu
+</pre></div>
+</div>
+</div>
+<div class="section" id="tail">
+<h2><tt class="docutils literal"><span class="pre">tail</span></tt><a class="headerlink" href="#tail" title="Permalink to this headline">¶</a></h2>
+<p>Print last N trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; tail 10 &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<p>Also supports <tt class="docutils literal"><span class="pre">tail</span> <span class="pre">+N</span></tt> syntax, which prints all but first N - 1 trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; tail +10 &lt;en-ud-test.conllu
+</pre></div>
+</div>
+</div>
+<div class="section" id="shuf">
+<h2><tt class="docutils literal"><span class="pre">shuf</span></tt><a class="headerlink" href="#shuf" title="Permalink to this headline">¶</a></h2>
+<p>Randomly shuffle trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; shuf &lt;en-ud-test.conllu
+</pre></div>
+</div>
+</div>
+<div class="section" id="html">
+<h2><tt class="docutils literal"><span class="pre">html</span></tt><a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h2>
+<p>View trees in browser.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; html &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<p>See also <a class="reference internal" href="#common-html-format-options">Common HTML format options</a>.</p>
+</div>
+<div class="section" id="grep">
+<h2><tt class="docutils literal"><span class="pre">grep</span></tt><a class="headerlink" href="#grep" title="Permalink to this headline">¶</a></h2>
+<p>Print only trees that match tregex pattern.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; grep &quot;w1 form /..../&quot; &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<dl class="option">
+<dt id="cmdoption--html">
+<tt class="descname">--html</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--html" title="Permalink to this definition">¶</a></dt>
+<dd><p>View matches in browser instead of printing matching trees to stdout.</p>
+<p>See also <a class="reference internal" href="#common-html-format-options">Common HTML format options</a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="sed">
+<h2><tt class="docutils literal"><span class="pre">sed</span></tt><a class="headerlink" href="#sed" title="Permalink to this headline">¶</a></h2>
+<p>Apply scripts from file to the trees and print resulting trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; sed script.txt &lt;en-ud-test.conllu
+</pre></div>
+</div>
+</div>
+<div class="section" id="gdb">
+<h2><tt class="docutils literal"><span class="pre">gdb</span></tt><a class="headerlink" href="#gdb" title="Permalink to this headline">¶</a></h2>
+<p>View step-by step script application (done by <tt class="docutils literal"><span class="pre">sed</span></tt>) to a single tree.</p>
+<div class="highlight-none"><div class="highlight"><pre>python -m&#39;dep_tregex&#39; gdb script.txt &lt;en-ud-test.conllu
+</pre></div>
+</div>
+<p>See also <a class="reference internal" href="#common-html-format-options">Common HTML format options</a>.</p>
+</div>
+<div class="section" id="common-html-format-options">
+<h2>Common HTML format options<a class="headerlink" href="#common-html-format-options" title="Permalink to this headline">¶</a></h2>
+<p>Commands that print or show HTML (<tt class="docutils literal"><span class="pre">html</span></tt>, <tt class="docutils literal"><span class="pre">grep</span> <span class="pre">--html</span></tt>, and <tt class="docutils literal"><span class="pre">gdb</span></tt>)
+have common formatting options.</p>
+<dl class="option">
+<dt id="cmdoption--print">
+<tt class="descname">--print</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--print" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of opening a browser window, print HTML to stdout.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--limit">
+<tt class="descname">--limit</tt><tt class="descclassname"> N</tt><a class="headerlink" href="#cmdoption--limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show only first <em>N</em> trees.</p>
+<p>Not applicable to <tt class="docutils literal"><span class="pre">gdb</span></tt>, which always shows only one tree.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--lemma">
+<tt class="descname">--lemma</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--lemma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show <tt class="docutils literal"><span class="pre">LEMMA</span></tt> CoNLL field.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--cpostag">
+<tt class="descname">--cpostag</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--cpostag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show <tt class="docutils literal"><span class="pre">CPOSTAG</span></tt> CoNLL field.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--postag">
+<tt class="descname">--postag</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--postag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show <tt class="docutils literal"><span class="pre">POSTAG</span></tt> CoNLL field.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--feats">
+<tt class="descname">--feats</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--feats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show <tt class="docutils literal"><span class="pre">FEATS</span></tt> CoNLL field.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption--reuse-tab">
+<tt class="descname">--reuse-tab</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption--reuse-tab" title="Permalink to this definition">¶</a></dt>
+<dd><p>When opening a new browser tab, try to re-use existing one.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tregex_tutorial.html" title="Tregex tutorial"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="quickstart.html" title="Getting started"
+             >previous</a> |</li>
+        <li><a href="index.html">dep_tregex  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Yandex.
+      Last updated on Mar 31, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
