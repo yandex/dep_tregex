@@ -1,2 +1,0 @@
-all:
-	sphinx-build . html
