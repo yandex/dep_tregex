@@ -1,0 +1,388 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tregex tutorial &mdash; dep_tregex  documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="dep_tregex  documentation" href="index.html" />
+    <link rel="next" title="Tregex reference" href="tregex_reference.html" />
+    <link rel="prev" title="Unix-like tree utilities" href="tree_ops.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="tregex_reference.html" title="Tregex reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tree_ops.html" title="Unix-like tree utilities"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">dep_tregex  documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="tregex-tutorial">
+<h1>Tregex tutorial<a class="headerlink" href="#tregex-tutorial" title="Permalink to this headline">¶</a></h1>
+<p><strong>Tregexes</strong> or <strong>tree patterns</strong> are tree-adapted regular expressions that
+match <em>a single node</em> in a dependency tree and assign it a label. Using
+assigned labels, <strong>tree scripts</strong> can modify the tree.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#match-all" id="id1">Match-all</a></li>
+<li><a class="reference internal" href="#logical-operators" id="id2">Logical operators</a></li>
+<li><a class="reference internal" href="#neighborhood-conditions" id="id3">Neighborhood conditions</a></li>
+<li><a class="reference internal" href="#strings-regular-expressions" id="id4">Strings &amp; regular expressions</a></li>
+<li><a class="reference internal" href="#backreferences" id="id5">Backreferences</a></li>
+<li><a class="reference internal" href="#scripts" id="id6">Scripts</a></li>
+<li><a class="reference internal" href="#move-and-copy-actions" id="id7"><tt class="docutils literal"><span class="pre">move</span></tt> and <tt class="docutils literal"><span class="pre">copy</span></tt> actions</a></li>
+</ul>
+</div>
+<div class="section" id="match-all">
+<h2><a class="toc-backref" href="#id1">Match-all</a><a class="headerlink" href="#match-all" title="Permalink to this headline">¶</a></h2>
+<p>An expression</p>
+<div class="highlight-none"><div class="highlight"><pre>w1
+</pre></div>
+</div>
+<p>matches any node and marks it as <tt class="docutils literal"><span class="pre">w1</span></tt> (instead of <tt class="docutils literal"><span class="pre">w1</span></tt> we can use any
+identifier). The marks can later be used in tree scripts to modify the tree
+(we&#8217;ll get there in a moment).</p>
+</div>
+<div class="section" id="logical-operators">
+<h2><a class="toc-backref" href="#id2">Logical operators</a><a class="headerlink" href="#logical-operators" title="Permalink to this headline">¶</a></h2>
+<p>After assigning an identifier to a node, we can write some conditions.</p>
+<div class="highlight-none"><div class="highlight"><pre>w1 form /.*[A-Z].*/ and cpostag &quot;NN&quot; and &lt;--. w2
+
+#  ^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^     ^^^^^^^
+#    condition 1         condition 2   condition 3
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Comments</p>
+<p class="last"><tt class="docutils literal"><span class="pre">#</span></tt> can be used for comments in tree patterns and tree scripts.</p>
+</div>
+<p>This pattern matches tree nodes that satisfy three conditions:</p>
+<ul class="simple">
+<li>FORM has a capital letter</li>
+<li>Has &#8220;NN&#8221; CPOSTAG</li>
+<li>Has a head, that is located to the right, and that matches the pattern
+<tt class="docutils literal"><span class="pre">w2</span></tt>. Since the pattern <tt class="docutils literal"><span class="pre">w2</span></tt> matches just any node, any head located to
+the right will do.</li>
+</ul>
+</div>
+<div class="section" id="neighborhood-conditions">
+<h2><a class="toc-backref" href="#id3">Neighborhood conditions</a><a class="headerlink" href="#neighborhood-conditions" title="Permalink to this headline">¶</a></h2>
+<p>Note the last condition, <tt class="docutils literal"><span class="pre">w1</span> <span class="pre">&lt;--.</span> <span class="pre">w2</span></tt>. It means &#8220;<tt class="docutils literal"><span class="pre">w1</span></tt> must have a head to
+the right, but the head also should match a pattern&#8221;. Here, the pattern for the
+head is just <tt class="docutils literal"><span class="pre">w2</span></tt>, but we can write something more complex.</p>
+<div class="highlight-none"><div class="highlight"><pre>w1 &lt;--. (w2 &lt;--. w3)
+
+# or, equivalently
+
+w1 &lt;--. w2 &lt;--. w3
+</pre></div>
+</div>
+<p>This pattern means &#8220;match a node, which has a head that lies to the right; this
+head, in turn, should also have a head that lies to the right of it&#8221;.</p>
+<p>Why <tt class="docutils literal"><span class="pre">w1</span> <span class="pre">&lt;--.</span> <span class="pre">PATTERN</span></tt> stands for &#8220;has a head to the right that matches
+<tt class="docutils literal"><span class="pre">PATTERN</span></tt>&#8221;? Note the little dot: it represents the node in the neighborhood,
+which we are going to condition with a subpattern. On the dotless end of the
+arrow is our initial node, which we were going to match in the first place.</p>
+<div class="highlight-none"><div class="highlight"><pre>(Visually)                    (Our metaphor)
+
++-----------+                 w1 &lt;--. PATTERN
+|           |
+v           |                 &quot;Has a *head* to the *right*
+w1 ... &lt;other node&gt;            that matches PATTERN&quot;
+
+
+
++-----------+                 w1 --&gt;. PATTERN
+|           |
+|           v                 &quot;Has a *child* to the *right*
+w1 ... &lt;other node&gt;            that matches PATTERN&quot;
+
+
+
+     +-----------+            w1 .--&gt; PATTERN
+     |           |
+     |           v            &quot;Has a *head* to the *left*
+&lt;other node&gt; ... w1            that matches PATTERN&quot;
+
+
+
+     +-----------+            w1 .&lt;-- PATTERN
+     |           |            &quot;Has a *child* to the *left*
+     v           |             that matches PATTERN&quot;
+&lt;other node&gt; ... w1
+</pre></div>
+</div>
+<p>If the arrow is short, like <tt class="docutils literal"><span class="pre">.&lt;-</span></tt> vs <tt class="docutils literal"><span class="pre">.&lt;--</span></tt>, this means that the node and
+its head/child should be adjacent to each other, that there can be no nodes in
+between.</p>
+<p>You can almost imagine the tree from the pattern:</p>
+<div class="highlight-none"><div class="highlight"><pre>(Visually)                     (Our metaphor)
+
++----------------+             w1 &lt;--. w2 and --&gt;. w3
+|                |
+|  +-----+       |             &quot;Has a head to the right (w2) *and also* has
+v  |     v       |              a child to the right (w3)&quot;
+ w1  ...  w3 ...  w2
+
++----------------+             w1 &lt;--. w2 --&gt;. w3
+|                |  +---+
+|                |  |   |      &quot;Has a head to the right (w2) *that* has a
+v                |  |   v       child to the right (w3)&quot;
+ w1     ...       w2 ... w3
+
++-------------------+          w1 &lt;--. w2 .&lt;-- w3
+|                   |
+|            +---+  |          &quot;Has a head to the right (w2) that has a
+v            v   |  |          child to the *left* (w3)&quot;
+ w1        w3 ... w2
+</pre></div>
+</div>
+</div>
+<div class="section" id="strings-regular-expressions">
+<h2><a class="toc-backref" href="#id4">Strings &amp; regular expressions</a><a class="headerlink" href="#strings-regular-expressions" title="Permalink to this headline">¶</a></h2>
+<p>Conditions like <tt class="docutils literal"><span class="pre">form</span></tt> or <tt class="docutils literal"><span class="pre">postag</span></tt> can either do an exact match
+or a regular expression match.</p>
+<div class="highlight-none"><div class="highlight"><pre>n1 form &#39;cat&#39;
+n1 form &quot;dog&quot;
+n1 form /cat|dog|catdog/
+</pre></div>
+</div>
+<p>By default, regular expressions match the whole attribute (<tt class="docutils literal"><span class="pre">/cat/</span></tt> won&#8217;t
+match &#8220;lolcat&#8221;), and also are case-sensitive. If you want substring match or
+case sensitivity, use regex flags:</p>
+<div class="highlight-none"><div class="highlight"><pre>n1 form /cat/   # case-sensitive, whole-string    &quot;cat&quot;
+n1 form /cat/i  # case-insensitive, whole-string  &quot;cat&quot;, &quot;Cat&quot;, &quot;CAT&quot;, ...
+n1 form /cat/g  # case-sensitive, substring       &quot;cats&quot;, &quot;lolcat&quot;, ...
+n1 form /cat/gi # case-insensitive, substring     &quot;CAT&quot;, &quot;Lolcat&quot;, ...
+</pre></div>
+</div>
+</div>
+<div class="section" id="backreferences">
+<h2><a class="toc-backref" href="#id5">Backreferences</a><a class="headerlink" href="#backreferences" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you want to match nodes on the left of their head which have a sibling
+on the same side.</p>
+<div class="highlight-none"><div class="highlight"><pre>  +----------+
+  |          |
+  |    +---+ |      a &lt;--. c .&lt;-- b
+  v    v   | |
+&gt;&gt;a&lt;&lt;  b    c
+</pre></div>
+</div>
+<p>This won&#8217;t work the way you&#8217;d expect: most likely, the pattern will match with
+<tt class="docutils literal"><span class="pre">a</span></tt> and <tt class="docutils literal"><span class="pre">b</span></tt> assigned to the same node!</p>
+<p>You need another condition that <tt class="docutils literal"><span class="pre">a</span></tt> and <tt class="docutils literal"><span class="pre">b</span></tt> should not be the same node;
+backreferences come to the rescue.</p>
+<div class="highlight-none"><div class="highlight"><pre>a &lt;--. (c .&lt;-- (b not == a))
+#                     ^^^^--------- backreference match!
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">There are severe restrictions on using backreferences. Please see the
+<a class="reference internal" href="tregex_reference.html#ref-node-conditions"><em>description of node conditions</em></a>.</p>
+</div>
+</div>
+<div class="section" id="scripts">
+<h2><a class="toc-backref" href="#id6">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>Now that you&#8217;ve mastered tree patterns, let&#8217;s move on to the tree scripts.</p>
+<p>Tree scripts modify the tree. Each script consists of a pattern, that assigns
+backreferences, and of one or more actions.</p>
+<div class="highlight-none"><div class="highlight"><pre># 1. Delete all &quot;cat&quot;s.
+
+{
+    x form /cat/i
+    ::
+    delete node x;
+}
+
+# 2. Move all &quot;dog&quot;s to the beginning.
+
+{
+    x form /dog/i $-- (start not $- w)
+    ::
+    move node x before node start;
+}
+</pre></div>
+</div>
+<p>Pretty straighforward. Scripts are executed sequentially; each script is
+applied once to each &#8220;original&#8221; node of the tree: the script is not applied to
+the nodes created by it.</p>
+</div>
+<div class="section" id="move-and-copy-actions">
+<h2><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">move</span></tt> and <tt class="docutils literal"><span class="pre">copy</span></tt> actions</a><a class="headerlink" href="#move-and-copy-actions" title="Permalink to this headline">¶</a></h2>
+<p>Probably the most important actions are <tt class="docutils literal"><span class="pre">move</span></tt> and <tt class="docutils literal"><span class="pre">copy</span></tt>.</p>
+<div class="highlight-none"><div class="highlight"><pre>(copy|move) (node|group) X (before|after) (node|group) Y
+
+e.g:
+
+copy node X before group Y
+move group X after group Y
+copy group X before node Y
+...
+</pre></div>
+</div>
+<p>Let&#8217;s discuss one of them, e.g. <tt class="docutils literal"><span class="pre">move</span> <span class="pre">group</span> <span class="pre">X</span> <span class="pre">after</span> <span class="pre">node</span> <span class="pre">Y</span></tt>.</p>
+<p>First of all, <tt class="docutils literal"><span class="pre">group</span> <span class="pre">X</span></tt> means the action affects not only the node <tt class="docutils literal"><span class="pre">X</span></tt> but
+also its &#8220;group&#8221;: children, children of children, etc.
+<tt class="docutils literal"><span class="pre">move</span> <span class="pre">group</span> <span class="pre">X</span> <span class="pre">after</span> <span class="pre">node</span> <span class="pre">Y</span></tt> does the following:</p>
+<ul class="simple">
+<li>Gather X and, recursively, all children of X (its &#8220;group&#8221;);</li>
+<li>Move gathered nodes right after the node Y, preserving initial order and
+heads.</li>
+</ul>
+<div class="highlight-none"><div class="highlight"><pre>+========+            (arc X =&gt; Y emphasized for clarity)
+| +--+   | +--+
+v |  v   | |  v
+ X   x1   Y   y1
+ ^^^^^^     ^--------- position right after Y
+      |
+      +--------------- X &amp; children
+
+
+move group X after node Y:
+
+
+         +---------------+
+         |               |
+         | +==+ +--+     |
+         | |  v |  v     v
+          Y    X   x1    y1
+               ^^^^^^
+</pre></div>
+</div>
+<p>This also works for non-projective trees.</p>
+<div class="highlight-none"><div class="highlight"><pre>+================+
+|    +---------+ |
+| +--|----+    | |
+v |  v    v    | |
+ X   y1   x1    Y
+ ^^-------^^---------- X &amp; children
+
+
+move group X after node Y:
+
+
+     +---------+
+     |         | +==+ +--+
+     v         | |  v |  v
+     y1         Y    X   x1
+</pre></div>
+</div>
+<p>If you want to move (or copy) just the selected word, leaving its children where
+they are, use <tt class="docutils literal"><span class="pre">node</span> <span class="pre">X</span></tt> instead of <tt class="docutils literal"><span class="pre">group</span> <span class="pre">X</span></tt>.</p>
+<div class="highlight-none"><div class="highlight"><pre>+================+
+|    +---------+ |
+| +--|----+    | |
+v |  v    v    | |
+ X   y1   x1    Y
+ ^^       ^^--------- X&#39;s children
+  +------------------ X
+
+
+move node X after node Y:
+
+          +-----------+
+     +----|----+      |
+     |    |    | +==+ |
+     v    v    | |  v |
+     y1   x1    Y    X
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">move</span> <span class="pre">...</span> <span class="pre">after</span> <span class="pre">group</span> <span class="pre">Y</span></tt> moves after the last (leftmost) node of the group
+of <tt class="docutils literal"><span class="pre">Y</span></tt>. <tt class="docutils literal"><span class="pre">move</span> <span class="pre">...</span> <span class="pre">before</span> <span class="pre">group</span> <span class="pre">Y</span></tt> moves to the position before the first
+(rightmost) node of the group of <tt class="docutils literal"><span class="pre">Y</span></tt>.</p>
+<div class="section" id="grouping">
+<h3>Grouping<a class="headerlink" href="#grouping" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">group</span> <span class="pre">X</span> <span class="pre">Y</span></tt> action creates a &#8220;virtual arc&#8221; from <tt class="docutils literal"><span class="pre">X</span></tt> to <tt class="docutils literal"><span class="pre">Y</span></tt> and from <tt class="docutils literal"><span class="pre">Y</span></tt>
+to <tt class="docutils literal"><span class="pre">X</span></tt>. These arcs are not present in a tree, don&#8217;t affect its connectivity
+and acyclicity, don&#8217;t participate in neighborhood conditions like <tt class="docutils literal"><span class="pre">X</span> <span class="pre">&lt;--.</span> <span class="pre">Y</span></tt>,
+<strong>but</strong> they are traversed for the purpose of determining the <em>group</em> of a node.</p>
+<div class="highlight-none"><div class="highlight"><pre>group X y2
+
++--------+
+|    +--+| +--+
+v    v  || |  v
+ X   y2   Y   y1
+ ^^^^^^     ^--------- position right after Y
+      |
+      +--------------- X &amp; its group
+
+
+move group X after node Y:
+
+
+         +---------------+
+         |+--------+     |
+         ||+--+    |     |
+         |||  v    v     v
+          Y   X   y2    y1
+              ^^^^^^
+</pre></div>
+</div>
+<p>Formally, the group of a node <tt class="docutils literal"><span class="pre">X</span></tt> is the union of <tt class="docutils literal"><span class="pre">X</span></tt>, all of the groups of
+the children of <tt class="docutils literal"><span class="pre">X</span></tt> and all of the groups of the nodes, grouped with <tt class="docutils literal"><span class="pre">X</span></tt>
+via <tt class="docutils literal"><span class="pre">group</span> <span class="pre">X</span> <span class="pre">Y</span></tt> or <tt class="docutils literal"><span class="pre">group</span> <span class="pre">Y</span> <span class="pre">X</span></tt> operations.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="tregex_reference.html" title="Tregex reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tree_ops.html" title="Unix-like tree utilities"
+             >previous</a> |</li>
+        <li><a href="index.html">dep_tregex  documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright Yandex.
+      Last updated on Mar 31, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
