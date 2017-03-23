@@ -2,11 +2,11 @@
 Getting started
 ===============
 
-1. Unpack ``dep_tregex.zip``
+1. Clone the repo ``dep_tregex``
 
    .. code-block:: none
 
-       $ unzip dep_tregex.zip
+       $ git clone https://github.com/yandex/dep_tregex.git
 
 2. Test the module.
 
@@ -14,6 +14,14 @@ Getting started
 
        $ cd dep_tregex/
        $ python -m'dep_tregex'
+
+   .. note::
+
+       If you use python2.6 (or earlier version), you'll have to specify the main module manually:
+
+       .. code-block:: none
+
+           $ python -m'dep_tregex.__main__'
 
    .. code-block:: none
 
@@ -213,4 +221,4 @@ Getting started
       </g>
     </svg>
 
-4. You're all set (just don't leave the ``dep_tregex/`` folder).
+4. You're all set (just don't leave the ``dep_tregex/`` folder, or just add it to your PYTHONPATH).
